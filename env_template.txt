@@ -1,0 +1,29 @@
+# Service Recommendation System - Environment Configuration Template
+# Copy this file to .env and update with your actual values
+
+# Google Gemini API Key (required for AI agent processing)
+# Get your key from: https://ai.google.dev/
+GOOGLE_API_KEY=your_gemini_api_key_here
+
+# Application Configuration
+APP_NAME=Service Recommendation System
+APP_VERSION=1.0.0
+DEBUG=True
+
+# Server Configuration
+HOST=0.0.0.0
+PORT=8000
+
+# Enterprise System Configuration (for production integration)
+# SAP_API_ENDPOINT=https://your-sap-instance.com/api
+# SAP_API_KEY=your_sap_api_key
+# SALESFORCE_API_ENDPOINT=https://your-salesforce-instance.salesforce.com
+# SALESFORCE_ACCESS_TOKEN=your_salesforce_token
+# PIM_API_ENDPOINT=https://your-pim-instance.com/api
+# PIM_API_KEY=your_pim_api_key
+
+# Business Rules Configuration
+DEFAULT_COST_CEILING=800
+MAX_DEVICE_AGE_FOR_REPAIR=15
+PREMIUM_CUSTOMER_TIER_BONUS=15
+

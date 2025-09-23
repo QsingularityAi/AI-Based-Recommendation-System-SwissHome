@@ -1,0 +1,1574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Recommendation System - AI-Powered Decision Engine</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c5aa0;
+            --secondary-color: #1976d2;
+            --success-color: #4caf50;
+            --warning-color: #ff9800;
+            --error-color: #f44336;
+            --background-color: #f8fafc;
+            --card-background: #ffffff;
+            --text-primary: #2c3e50;
+            --text-secondary: #6c757d;
+            --border-color: #e9ecef;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .card {
+            background: var(--card-background);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-header h2 {
+            font-size: 1.3rem;
+            margin: 0;
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+            background-color: #fafafa;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background-color: white;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--success-color), #45a049);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .btn:hover {
+            background: linear-gradient(135deg, #45a049, #3d8b40);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .demo-scenarios {
+            margin-bottom: 20px;
+        }
+
+        .scenario-btn {
+            background: #e3f2fd;
+            border: 2px solid var(--secondary-color);
+            color: var(--secondary-color);
+            padding: 10px 15px;
+            margin: 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .scenario-btn:hover {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .result-panel {
+            display: none;
+        }
+
+        .result-panel.show {
+            display: block;
+        }
+
+        .recommendation-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .recommendation-header.repair {
+            background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
+            color: #2e7d32;
+        }
+
+        .recommendation-header.replace {
+            background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+            color: #f57c00;
+        }
+
+        .recommendation-header.manufacturer_referral {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            color: #1976d2;
+        }
+
+        .confidence-badge {
+            background: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .metric-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .metric-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+
+        .agent-flow {
+            margin: 20px 0;
+        }
+
+        .agent-step {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            margin: 10px 0;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid var(--success-color);
+        }
+
+        .agent-step i {
+            margin-right: 10px;
+            color: var(--success-color);
+        }
+
+        .replacement-options, .repair-details {
+            margin-top: 20px;
+        }
+
+        .option-card {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .option-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .option-title {
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
+        .option-price {
+            color: var(--success-color);
+            font-weight: bold;
+        }
+
+        .features-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .feature-tag {
+            background: var(--primary-color);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .workflow-visualization {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: monospace;
+            white-space: pre-line;
+            line-height: 1.6;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1><i class="fas fa-robot"></i> ServiceMind AI - Intelligent Service Decision Platform
+        </h1>
+        <div class="subtitle">AI-Powered Multi-Agent Decision Engine for Premium Appliances</div>
+        <div style="opacity: 0.8; font-size: 1rem;">Leveraging SAP, Salesforce & PIM Integration | LangGraph Multi-Agent Architecture</div>
+    </div>
+
+    <div class="main-container">
+        <!-- Input Panel -->
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-tools"></i>
+                <h2>Service Case Input</h2>
+            </div>
+            <div class="card-body">
+                <!-- Demo Scenarios -->
+                <div class="demo-scenarios">
+                    <h3 style="margin-bottom: 15px; color: var(--text-primary);">
+                        <i class="fas fa-play-circle"></i> Quick Demo Scenarios
+                    </h3>
+                    <div id="scenarioButtons">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+
+                <form id="serviceCaseForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="deviceType"><i class="fas fa-home"></i> Device Type:</label>
+                            <select id="deviceType" required>
+                                <option value="">Select device type</option>
+                                <option value="cooktop">Cooktop</option>
+                                <option value="oven">Oven</option>
+                                <option value="refrigerator">Refrigerator</option>
+                                <option value="dishwasher">Dishwasher</option>
+                                <option value="microwave">Microwave</option>
+                                <option value="washer">Washing Machine</option>
+                                <option value="dryer">Dryer</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="brand"><i class="fas fa-award"></i> Brand:</label>
+                            <select id="brand" required>
+                                <option value="">Select brand</option>
+                                <option value="V-Zug">V-Zug</option>
+                                <option value="Miele">Miele</option>
+                                <option value="Bosch">Bosch</option>
+                                <option value="Siemens">Siemens</option>
+                                <option value="Electrolux">Electrolux</option>
+                                <option value="Bauknecht">Bauknecht</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="age"><i class="fas fa-calendar-alt"></i> Device Age (years):</label>
+                            <input type="number" id="age" min="0" max="25" placeholder="e.g., 5" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="priority"><i class="fas fa-exclamation-triangle"></i> Priority:</label>
+                            <select id="priority">
+                                <option value="standard">Standard</option>
+                                <option value="high">High Priority</option>
+                                <option value="urgent">Urgent</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group full-width">
+                            <label for="errorDescription"><i class="fas fa-clipboard-list"></i> Error Description:</label>
+                            <textarea id="errorDescription" rows="3" placeholder="Describe the issue (e.g., 'E26 error code, pump not draining')" required></textarea>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn" id="submitBtn">
+                        <i class="fas fa-cogs"></i>
+                        Process with AI Agents
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Results Panel -->
+        <div class="card result-panel" id="resultPanel">
+            <div class="card-header">
+                <i class="fas fa-chart-line"></i>
+                <h2>AI Recommendation Result</h2>
+            </div>
+            <div class="card-body">
+                <div id="loadingState" class="loading">
+                    <div class="spinner"></div>
+                    <h3>AI Agents Processing...</h3>
+                    <p>Our multi-agent system is analyzing your service case</p>
+                    <div id="processedWorkflowSteps"></div>
+                </div>
+                
+                <div id="recommendationContent" style="display: none;">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Overview Panel (shown when no active case) -->
+    <div class="card" id="systemOverview" style="margin: 30px auto; max-width: 1200px;">
+        <div class="card-header">
+            <i class="fas fa-network-wired"></i>
+            <h2>Multi-Agent System Architecture</h2>
+        </div>
+        <div class="card-body">
+            <div class="workflow-visualization" id="workflowViz">
+                Loading system architecture...
+            </div>
+            
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value">5</div>
+                    <div class="metric-label">Specialized AI Agents</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">4</div>
+                    <div class="metric-label">System Integrations</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">< 2s</div>
+                    <div class="metric-label">Average Response Time</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">95%</div>
+                    <div class="metric-label">Recommendation Accuracy</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sales Dashboard Panel -->
+    <div class="card" id="salesDashboard" style="margin: 30px auto; max-width: 1200px; display: none;">
+        <div class="card-header">
+            <i class="fas fa-tachometer-alt"></i>
+            <h2>Sales Dashboard</h2>
+            <button class="btn" onclick="showBatchUpload()" style="margin-left: auto; width: auto; padding: 8px 16px;">
+                <i class="fas fa-upload"></i> Batch Upload
+            </button>
+        </div>
+        <div class="card-body">
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value" id="todayCases">0</div>
+                    <div class="metric-label">Cases Today</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="repairRate">65%</div>
+                    <div class="metric-label">Repair Rate</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="avgProcessingTime">1.8s</div>
+                    <div class="metric-label">Avg Processing Time</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="totalSavings">CHF 2,450</div>
+                    <div class="metric-label">Daily Efficiency Savings</div>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <h4><i class="fas fa-clock"></i> Quick Actions for Sales Staff</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+                    <button class="btn" onclick="toggleQuickMode()" id="quickModeBtn" style="background: linear-gradient(135deg, #ff9800, #f57c00);">
+                        <i class="fas fa-bolt"></i> Quick Mode OFF
+                    </button>
+                    <button class="btn" onclick="showBatchProgress()" style="background: linear-gradient(135deg, #9c27b0, #7b1fa2);">
+                        <i class="fas fa-tasks"></i> Batch Jobs
+                    </button>
+                    <button class="btn" onclick="exportResults()" style="background: linear-gradient(135deg, #607d8b, #455a64);">
+                        <i class="fas fa-download"></i> Export Data
+                    </button>
+                    <button class="btn" onclick="showIntegrationStatus()" style="background: linear-gradient(135deg, #795548, #5d4037);">
+                        <i class="fas fa-plug"></i> System Status
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Batch Upload Modal -->
+    <div id="batchModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 15px; max-width: 500px; width: 90%;">
+            <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 20px;">
+                <h3><i class="fas fa-upload"></i> Batch Upload Service Cases</h3>
+                <button onclick="closeBatchModal()" style="background: none; border: none; font-size: 24px; cursor: pointer;">&times;</button>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <label for="batchFile" style="display: block; margin-bottom: 10px;">Upload CSV File:</label>
+                <input type="file" id="batchFile" accept=".csv" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                <div style="margin-top: 10px; font-size: 12px; color: #666;">
+                    CSV format: device_type, brand, age, error_description, priority
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 10px;">
+                <button onclick="uploadBatchFile()" class="btn" style="flex: 1;">
+                    <i class="fas fa-upload"></i> Upload & Process
+                </button>
+                <button onclick="downloadTemplate()" style="background: #e0e0e0; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer;">
+                    <i class="fas fa-download"></i> Template
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Mode Indicator -->
+    <div id="quickModeIndicator" style="display: none; position: fixed; top: 20px; right: 20px; background: linear-gradient(135deg, #ff9800, #f57c00); color: white; padding: 10px 20px; border-radius: 25px; z-index: 999; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+        <i class="fas fa-bolt"></i> QUICK MODE ACTIVE
+    </div>
+
+    <script>
+        let demoScenarios = [];
+        let quickMode = false;
+        let userProfile = null;
+        let dailyStats = { cases: 0, repairRate: 65, avgTime: 1.8, savings: 2450 };
+        
+        // Load demo scenarios and workflow visualization on page load
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadUserProfile();
+            await loadDemoScenarios();
+            await loadWorkflowVisualization();
+            setupSalesDashboard();
+            setupKeyboardShortcuts();
+        });
+
+        async function loadUserProfile() {
+            try {
+                const response = await fetch('http://localhost:8000/user/profile');
+                if (response.ok) {
+                    userProfile = await response.json();
+                    updateUIForUser(userProfile);
+                }
+            } catch (error) {
+                console.log('Running in demo mode - no authentication');
+                userProfile = {
+                    name: "Demo Sales Representative",
+                    role: "SalesConsultant",
+                    department: "After Sales Service"
+                };
+            }
+        }
+
+        function updateUIForUser(user) {
+            // Add user info to header
+            const header = document.querySelector('.header .subtitle');
+            header.innerHTML += `<br><i class="fas fa-user"></i> Welcome, ${user.name} (${user.role})`;
+            
+            // Show sales dashboard for sales roles
+            if (user.role.includes('Sales') || user.role.includes('Consultant')) {
+                document.getElementById('salesDashboard').style.display = 'block';
+                document.getElementById('systemOverview').style.display = 'none';
+            }
+        }
+
+        function setupSalesDashboard() {
+            // Update daily stats periodically
+            updateDailyStats();
+            setInterval(updateDailyStats, 30000); // Update every 30 seconds
+        }
+
+        function updateDailyStats() {
+            document.getElementById('todayCases').textContent = dailyStats.cases;
+            document.getElementById('repairRate').textContent = dailyStats.repairRate + '%';
+            document.getElementById('avgProcessingTime').textContent = dailyStats.avgTime + 's';
+            document.getElementById('totalSavings').textContent = 'CHF ' + dailyStats.savings.toLocaleString();
+        }
+
+        function setupKeyboardShortcuts() {
+            document.addEventListener('keydown', function(e) {
+                // Quick mode toggle: Ctrl+Q
+                if (e.ctrlKey && e.key === 'q') {
+                    e.preventDefault();
+                    toggleQuickMode();
+                }
+                
+                // Submit form: Ctrl+Enter
+                if (e.ctrlKey && e.key === 'Enter') {
+                    e.preventDefault();
+                    document.getElementById('serviceCaseForm').dispatchEvent(new Event('submit'));
+                }
+                
+                // Clear form: Ctrl+R
+                if (e.ctrlKey && e.key === 'r') {
+                    e.preventDefault();
+                    clearForm();
+                }
+            });
+        }
+
+        function toggleQuickMode() {
+            quickMode = !quickMode;
+            const btn = document.getElementById('quickModeBtn');
+            const indicator = document.getElementById('quickModeIndicator');
+            
+            if (quickMode) {
+                btn.innerHTML = '<i class="fas fa-bolt"></i> Quick Mode ON';
+                btn.style.background = 'linear-gradient(135deg, #4caf50, #45a049)';
+                indicator.style.display = 'block';
+                
+                // Enable quick mode features
+                enableAutoComplete();
+                enableInstantProcessing();
+                
+            } else {
+                btn.innerHTML = '<i class="fas fa-bolt"></i> Quick Mode OFF';
+                btn.style.background = 'linear-gradient(135deg, #ff9800, #f57c00)';
+                indicator.style.display = 'none';
+                
+                // Disable quick mode features
+                disableQuickModeFeatures();
+            }
+        }
+
+        function enableAutoComplete() {
+            // Smart auto-completion for common error patterns
+            const errorField = document.getElementById('errorDescription');
+            
+            errorField.addEventListener('input', function() {
+                const value = this.value.toLowerCase();
+                
+                // Auto-suggest common error patterns
+                if (value.includes('not heat') && !value.includes('heating element')) {
+                    this.value = 'Heating element not working properly';
+                    this.style.backgroundColor = '#e8f5e8';
+                    setTimeout(() => this.style.backgroundColor = '', 1000);
+                }
+                
+                if (value.includes('leak') && !value.includes('door seal')) {
+                    this.value = 'Water leak from door seal area';
+                    this.style.backgroundColor = '#e8f5e8';
+                    setTimeout(() => this.style.backgroundColor = '', 1000);
+                }
+                
+                if (value.includes('pump') && !value.includes('draining')) {
+                    this.value = 'Pump not draining water properly';
+                    this.style.backgroundColor = '#e8f5e8';
+                    setTimeout(() => this.style.backgroundColor = '', 1000);
+                }
+            });
+        }
+
+        function enableInstantProcessing() {
+            // Process as soon as minimum required fields are filled
+            const requiredFields = ['deviceType', 'brand', 'age', 'errorDescription'];
+            
+            requiredFields.forEach(fieldId => {
+                document.getElementById(fieldId).addEventListener('blur', function() {
+                    if (quickMode && allRequiredFieldsFilled()) {
+                        // Auto-submit after brief delay
+                        setTimeout(() => {
+                            if (quickMode && allRequiredFieldsFilled()) {
+                                document.getElementById('serviceCaseForm').dispatchEvent(new Event('submit'));
+                            }
+                        }, 1000);
+                    }
+                });
+            });
+        }
+
+        function allRequiredFieldsFilled() {
+            const deviceType = document.getElementById('deviceType').value;
+            const brand = document.getElementById('brand').value;
+            const age = document.getElementById('age').value;
+            const errorDescription = document.getElementById('errorDescription').value;
+            
+            return deviceType && brand && age && errorDescription && errorDescription.length > 10;
+        }
+
+        function disableQuickModeFeatures() {
+            // Remove auto-complete styling
+            document.getElementById('errorDescription').style.backgroundColor = '';
+        }
+
+        function clearForm() {
+            document.getElementById('serviceCaseForm').reset();
+            document.getElementById('resultPanel').classList.remove('show');
+            document.getElementById('systemOverview').style.display = userProfile?.role?.includes('Sales') ? 'none' : 'block';
+            document.getElementById('salesDashboard').style.display = userProfile?.role?.includes('Sales') ? 'block' : 'none';
+        }
+
+        // Batch Processing Functions
+        function showBatchUpload() {
+            document.getElementById('batchModal').style.display = 'block';
+        }
+
+        function closeBatchModal() {
+            document.getElementById('batchModal').style.display = 'none';
+        }
+
+        async function uploadBatchFile() {
+            const fileInput = document.getElementById('batchFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Please select a CSV file');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            try {
+                const response = await fetch('http://localhost:8000/batch/upload-csv', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    closeBatchModal();
+                    alert(`Batch job submitted! Job ID: ${result.job_id}`);
+                    monitorBatchJob(result.job_id);
+                } else {
+                    const error = await response.json();
+                    alert(`Error: ${error.detail}`);
+                }
+            } catch (error) {
+                alert(`Error uploading file: ${error.message}`);
+            }
+        }
+
+        function downloadTemplate() {
+            const csvContent = "device_type,brand,age,error_description,priority\ncooktop,V-Zug,3,Heating element not working,standard\ndishwasher,Miele,7,Water leak from door,high\n";
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'service_cases_template.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        async function monitorBatchJob(jobId) {
+            const checkStatus = async () => {
+                try {
+                    const response = await fetch(`http://localhost:8000/batch/${jobId}`);
+                    const status = await response.json();
+                    
+                    console.log(`Batch job ${jobId}: ${status.status} (${status.completed_cases}/${status.total_cases})`);
+                    
+                    if (status.status === 'completed') {
+                        alert(`Batch job completed! Processed ${status.completed_cases} cases, ${status.failed_cases} failed.`);
+                        return;
+                    }
+                    
+                    if (status.status === 'processing') {
+                        setTimeout(checkStatus, 2000); // Check again in 2 seconds
+                    }
+                } catch (error) {
+                    console.error('Error checking batch status:', error);
+                }
+            };
+            
+            checkStatus();
+        }
+
+        function showBatchProgress() {
+            alert('Batch progress feature - would show list of active batch jobs');
+        }
+
+        function exportResults() {
+            alert('Export feature - would generate CSV/Excel report of recent cases');
+        }
+
+        async function showIntegrationStatus() {
+            try {
+                const response = await fetch('http://localhost:8000/system-integrations');
+                const integrations = await response.json();
+                
+                let statusText = 'System Integration Status:\n\n';
+                Object.entries(integrations.integrations).forEach(([system, info]) => {
+                    statusText += `${system}: ${info.status}\n`;
+                });
+                
+                alert(statusText);
+            } catch (error) {
+                alert('Error fetching integration status');
+            }
+        }
+
+        // Action functions for repair orders and replacement selection
+        function acceptRepairOrder(orderId) {
+            // Show confirmation
+            if (confirm(`Accept repair order ${orderId}?\n\nThis will:\n• Schedule the repair service\n• Notify the customer automatically\n• Order required parts\n• Assign a technician`)) {
+                // Update button states
+                const acceptBtn = event.target;
+                acceptBtn.style.background = 'linear-gradient(135deg, #4caf50, #45a049)';
+                acceptBtn.innerHTML = '<i class="fas fa-check-circle"></i> Order Accepted';
+                acceptBtn.disabled = true;
+                acceptBtn.style.opacity = '0.8';
+                
+                // Disable deny button
+                const denyBtn = acceptBtn.parentNode.querySelector('.deny-btn');
+                if (denyBtn) {
+                    denyBtn.style.opacity = '0.3';
+                    denyBtn.disabled = true;
+                }
+                
+                // Show success notification
+                showNotification(`✅ Repair order ${orderId} accepted! Service scheduling initiated.`, 'success');
+                
+                // Simulate workflow automation with delayed notifications
+                setTimeout(() => {
+                    showNotification('📧 Customer notification sent automatically', 'info');
+                }, 1500);
+                
+                setTimeout(() => {
+                    showNotification('📦 Parts ordered from supplier', 'info');
+                }, 2500);
+                
+                setTimeout(() => {
+                    showNotification('👨‍🔧 Technician assigned and notified', 'info');
+                }, 3500);
+                
+                // Update daily stats
+                dailyStats.cases++;
+                updateDailyStats();
+            }
+        }
+
+        function denyRepairOrder(orderId) {
+            const reason = prompt(`Please provide a reason for denying repair order ${orderId}:\n\n(This information will be logged for review)`);
+            if (reason && reason.trim()) {
+                // Update button states
+                const denyBtn = event.target;
+                denyBtn.style.background = 'linear-gradient(135deg, #f44336, #d32f2f)';
+                denyBtn.innerHTML = '<i class="fas fa-times-circle"></i> Order Denied';
+                denyBtn.disabled = true;
+                denyBtn.style.opacity = '0.8';
+                
+                // Disable accept button
+                const acceptBtn = denyBtn.parentNode.querySelector('.accept-btn');
+                if (acceptBtn) {
+                    acceptBtn.style.opacity = '0.3';
+                    acceptBtn.disabled = true;
+                }
+                
+                // Show denial notification
+                showNotification(`❌ Repair order ${orderId} denied.\nReason: ${reason}`, 'warning');
+                
+                // Simulate automatic replacement recommendation trigger
+                setTimeout(() => {
+                    showNotification('🔄 Alternative replacement options being generated...', 'info');
+                }, 1000);
+                
+                // Update daily stats
+                dailyStats.cases++;
+                updateDailyStats();
+            }
+        }
+
+        function selectReplacementOption(index, model, brand) {
+            if (confirm(`Select ${brand} ${model} for replacement?\n\nThis will:\n• Create a Salesforce sales opportunity\n• Generate customer quote\n• Schedule product demonstration\n• Process trade-in evaluation`)) {
+                // Update button state
+                const btn = event.target;
+                btn.style.background = 'linear-gradient(135deg, #4caf50, #45a049)';
+                btn.innerHTML = '<i class="fas fa-check-circle"></i> Option Selected';
+                btn.disabled = true;
+                btn.style.opacity = '0.8';
+                
+                // Disable other option buttons
+                const allButtons = document.querySelectorAll('.select-replacement-btn');
+                allButtons.forEach((button, i) => {
+                    if (i !== index) {
+                        button.style.opacity = '0.3';
+                        button.disabled = true;
+                    }
+                });
+                
+                // Show success notification
+                showNotification(`✅ ${brand} ${model} selected! Sales process initiated.`, 'success');
+                
+                // Simulate Salesforce opportunity creation
+                setTimeout(() => {
+                    showNotification('📊 Salesforce opportunity created automatically', 'info');
+                }, 1000);
+                
+                setTimeout(() => {
+                    showNotification('💰 Customer quote generated and sent', 'info');
+                }, 2000);
+                
+                setTimeout(() => {
+                    showNotification('📅 Product demonstration scheduled', 'info');
+                }, 3000);
+                
+                // Update daily stats
+                dailyStats.cases++;
+                // Update repair rate (replacement selected)
+                dailyStats.repairRate = Math.round((dailyStats.repairRate * (dailyStats.cases - 1) + 0) / dailyStats.cases);
+                updateDailyStats();
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            const bgColor = type === 'success' ? '#4caf50' : type === 'warning' ? '#ff9800' : type === 'error' ? '#f44336' : '#2196f3';
+            
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${bgColor};
+                color: white;
+                padding: 15px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                z-index: 10000;
+                max-width: 350px;
+                font-size: 14px;
+                font-weight: 500;
+                line-height: 1.4;
+                animation: slideInRight 0.3s ease;
+                border-left: 4px solid rgba(255,255,255,0.3);
+            `;
+            
+            notification.innerHTML = message.replace(/\n/g, '<br>');
+            document.body.appendChild(notification);
+            
+            // Add slideIn animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideInRight {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes slideOutRight {
+                    from { transform: translateX(0); opacity: 1; }
+                    to { transform: translateX(100%); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // Remove after 5 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
+            }, 5000);
+        }
+
+        async function loadDemoScenarios() {
+            try {
+                const response = await fetch('http://localhost:8000/demo-scenarios');
+                const data = await response.json();
+                demoScenarios = data.scenarios;
+                
+                const scenarioContainer = document.getElementById('scenarioButtons');
+                scenarioContainer.innerHTML = demoScenarios.map(scenario => 
+                    `<button type="button" class="scenario-btn" onclick="loadScenario('${scenario.name}')">
+                        ${scenario.name}
+                    </button>`
+                ).join('');
+            } catch (error) {
+                console.error('Error loading demo scenarios:', error);
+            }
+        }
+
+        async function loadWorkflowVisualization() {
+            try {
+                const response = await fetch('http://localhost:8000/workflow-status');
+                const data = await response.json();
+                document.getElementById('workflowViz').textContent = data.workflow_visualization;
+            } catch (error) {
+                document.getElementById('workflowViz').textContent = 'Error loading workflow visualization';
+            }
+        }
+
+        function loadScenario(scenarioName) {
+            const scenario = demoScenarios.find(s => s.name === scenarioName);
+            if (scenario) {
+                document.getElementById('deviceType').value = scenario.input.device_type;
+                document.getElementById('brand').value = scenario.input.brand;
+                document.getElementById('age').value = scenario.input.age;
+                document.getElementById('errorDescription').value = scenario.input.error_description;
+            }
+        }
+
+        document.getElementById('serviceCaseForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Get form values
+            const deviceType = document.getElementById('deviceType').value;
+            const brand = document.getElementById('brand').value;
+            const age = parseInt(document.getElementById('age').value);
+            const errorDescription = document.getElementById('errorDescription').value;
+            const priority = document.getElementById('priority').value;
+            
+            // Prepare data for API call
+            const serviceCaseData = {
+                device_type: deviceType,
+                brand: brand,
+                age: age,
+                error_description: errorDescription,
+                priority: priority
+            };
+            
+            // Show loading state and hide dashboards
+            showLoadingState();
+            document.getElementById('systemOverview').style.display = 'none';
+            document.getElementById('salesDashboard').style.display = 'none';
+            
+            const processingStart = Date.now();
+            
+            try {
+                const response = await fetch('http://localhost:8000/service-case', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(serviceCaseData)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                
+                // Update statistics
+                updateStatsAfterProcessing(result, Date.now() - processingStart);
+                
+                displayResult(result);
+                
+                // Auto-clear form in quick mode after showing results
+                if (quickMode) {
+                    setTimeout(() => {
+                        clearForm();
+                    }, 3000);
+                }
+                
+            } catch (error) {
+                showError(error.message);
+            }
+        });
+
+        function updateStatsAfterProcessing(result, processingTime) {
+            // Update daily stats
+            dailyStats.cases++;
+            
+            // Update repair rate
+            if (result.recommendation === 'repair') {
+                // Weighted average of repair rate
+                dailyStats.repairRate = Math.round((dailyStats.repairRate * (dailyStats.cases - 1) + 100) / dailyStats.cases);
+            } else {
+                dailyStats.repairRate = Math.round((dailyStats.repairRate * (dailyStats.cases - 1) + 0) / dailyStats.cases);
+            }
+            
+            // Update average processing time
+            const newAvgTime = (dailyStats.avgTime * (dailyStats.cases - 1) + (processingTime / 1000)) / dailyStats.cases;
+            dailyStats.avgTime = Math.round(newAvgTime * 10) / 10;
+            
+            // Update estimated savings (based on time saved vs manual process)
+            const manualProcessTime = 30 * 60; // 30 minutes in seconds
+            const timeSaved = manualProcessTime - (processingTime / 1000);
+            const hourlyCost = 80; // CHF per hour for sales staff
+            const savingsPerCase = (timeSaved / 3600) * hourlyCost;
+            dailyStats.savings += Math.round(savingsPerCase);
+            
+            // Update UI if sales dashboard is visible
+            if (userProfile?.role?.includes('Sales') || userProfile?.role?.includes('Consultant')) {
+                updateDailyStats();
+            }
+        }
+
+        function showLoadingState() {
+            document.getElementById('resultPanel').classList.add('show');
+            document.getElementById('loadingState').style.display = 'block';
+            document.getElementById('recommendationContent').style.display = 'none';
+            
+            // Simulate workflow steps
+            const steps = ['Triage Agent', 'Data Enrichment', 'Technical Analysis', 'Economic Analysis', 'Recommendation Engine'];
+            const stepContainer = document.getElementById('processedWorkflowSteps');
+            stepContainer.innerHTML = '';
+            
+            steps.forEach((step, index) => {
+                setTimeout(() => {
+                    stepContainer.innerHTML += `<div class="agent-step"><i class="fas fa-check"></i>${step} Complete</div>`;
+                }, (index + 1) * 500);
+            });
+        }
+
+        function displayResult(result) {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('recommendationContent').style.display = 'block';
+            
+            const recommendation = result.recommendation;
+            const confidenceScore = (result.confidence_score * 100).toFixed(0);
+            
+            let content = `
+                <div class="recommendation-header ${recommendation}">
+                    <div>
+                        <i class="fas ${getRecommendationIcon(recommendation)}" style="font-size: 2rem;"></i>
+                    </div>
+                    <div>
+                        <h3>${getRecommendationTitle(recommendation)}</h3>
+                        <p>${result.justification}</p>
+                    </div>
+                    <div class="confidence-badge">
+                        ${confidenceScore}% Confidence
+                    </div>
+                </div>
+
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-value">${result.processing_time_ms}ms</div>
+                        <div class="metric-label">Processing Time</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">${result.workflow_path.length}</div>
+                        <div class="metric-label">Agents Involved</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">${confidenceScore}%</div>
+                        <div class="metric-label">AI Confidence</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">${recommendation === 'repair' ? 'CHF ' + (result.repair_order?.cost_breakdown?.total_cost || 'N/A') : 'Multiple'}</div>
+                        <div class="metric-label">${recommendation === 'repair' ? 'Repair Cost' : 'Options'}</div>
+                    </div>
+                </div>
+
+                <div class="agent-flow">
+                    <h4><i class="fas fa-route"></i> Agent Workflow Path</h4>
+                    ${result.workflow_path.map(step => `
+                        <div class="agent-step">
+                            <i class="fas fa-check"></i>
+                            ${formatAgentName(step)}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+
+            // Add specific recommendation details
+            if (recommendation === 'repair' && result.repair_order) {
+                content += generateRepairDetails(result.repair_order);
+            } else if (recommendation === 'replace' && result.replacement_options) {
+                content += generateReplacementOptions(result.replacement_options);
+            }
+
+            // Add agent reasoning if available
+            if (result.agent_reasoning) {
+                content += generateAgentReasoning(result.agent_reasoning);
+            }
+
+            document.getElementById('recommendationContent').innerHTML = content;
+        }
+
+        function getRecommendationIcon(recommendation) {
+            const icons = {
+                'repair': 'fa-wrench',
+                'replace': 'fa-sync-alt',
+                'manufacturer_referral': 'fa-phone',
+                'manual_review': 'fa-user-cog',
+                'error': 'fa-exclamation-triangle'
+            };
+            return icons[recommendation] || 'fa-question';
+        }
+
+        function getRecommendationTitle(recommendation) {
+            const titles = {
+                'repair': 'Repair Recommended',
+                'replace': 'Replacement Recommended',
+                'manufacturer_referral': 'Manufacturer Referral',
+                'manual_review': 'Manual Review Required',
+                'error': 'Processing Error'
+            };
+            return titles[recommendation] || 'Unknown Recommendation';
+        }
+
+        function formatAgentName(step) {
+            const names = {
+                'triage': 'Triage Agent - Input Validation & Routing',
+                'data_enrichment': 'Data Enrichment Agent - SAP/Salesforce/PIM Integration',
+                'technical_analysis': 'Technical Analyst Agent - Repair Feasibility Assessment',
+                'economic_analysis': 'Economic Analyst Agent - Cost-Benefit Analysis',
+                'recommendation': 'Recommendation Engine - Final Decision Synthesis',
+                'manufacturer_referral': 'Manufacturer Referral Process',
+                'manual_review_required': 'Manual Review Queue'
+            };
+            return names[step] || step;
+        }
+
+        function generateRepairDetails(repairOrder) {
+            return `
+                <div class="repair-details">
+                    <h4><i class="fas fa-tools"></i> Repair Order Details</h4>
+                    
+                    <!-- Action Buttons -->
+                    <div class="repair-order-actions" style="margin-bottom: 25px; text-align: center; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+                        <h5 style="margin-bottom: 15px; color: #2c3e50;">Review and Take Action</h5>
+                        <button class="btn action-btn accept-btn" onclick="acceptRepairOrder('${repairOrder.order_id || 'N/A'}')" 
+                                style="background: linear-gradient(135deg, #4caf50, #45a049); margin-right: 15px; padding: 15px 30px; font-size: 16px; font-weight: bold; border-radius: 8px; border: none; color: white; cursor: pointer; box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3); transition: all 0.3s ease;">
+                            <i class="fas fa-check-circle"></i> Accept Repair Order
+                        </button>
+                        <button class="btn action-btn deny-btn" onclick="denyRepairOrder('${repairOrder.order_id || 'N/A'}')" 
+                                style="background: linear-gradient(135deg, #f44336, #d32f2f); padding: 15px 30px; font-size: 16px; font-weight: bold; border-radius: 8px; border: none; color: white; cursor: pointer; box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3); transition: all 0.3s ease;">
+                            <i class="fas fa-times-circle"></i> Deny Repair Order
+                        </button>
+                    </div>
+                    
+                    <div class="option-card" style="background: white; border: 2px solid #e0e0e0; border-radius: 12px; padding: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                        <div class="option-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid #f0f0f0;">
+                            <div class="option-title" style="font-size: 24px; font-weight: bold; color: #2c3e50;">
+                                <i class="fas fa-wrench" style="color: #4caf50; margin-right: 10px;"></i>
+                                Order #${repairOrder.order_id || 'N/A'}
+                            </div>
+                            <div class="option-price" style="font-size: 28px; font-weight: bold; color: #e74c3c;">
+                                CHF ${repairOrder.cost_breakdown?.total_cost?.toFixed(2) || '0.00'}
+                            </div>
+                        </div>
+                        
+                        <!-- Enhanced Details Grid -->
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 20px;">
+                            
+                            <!-- Cost Breakdown Card -->
+                            <div class="detail-card" style="background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 4px solid #2196f3;">
+                                <h5 style="color: #2196f3; margin-bottom: 15px;"><i class="fas fa-money-bill-wave"></i> Cost Breakdown</h5>
+                                <div class="cost-item" style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span>Parts Cost:</span>
+                                    <strong>CHF ${repairOrder.cost_breakdown?.parts_cost?.toFixed(2) || '0.00'}</strong>
+                                </div>
+                                <div class="cost-item" style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span>Labor Cost:</span>
+                                    <strong>CHF ${repairOrder.cost_breakdown?.labor_cost?.toFixed(2) || '0.00'}</strong>
+                                </div>
+                                ${repairOrder.cost_breakdown?.travel_cost ? `
+                                    <div class="cost-item" style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                        <span>Travel Cost:</span>
+                                        <strong>CHF ${repairOrder.cost_breakdown.travel_cost.toFixed(2)}</strong>
+                                    </div>
+                                ` : ''}
+                                <hr style="margin: 10px 0; border: 1px solid #dee2e6;">
+                                <div class="cost-item total" style="display: flex; justify-content: space-between; font-weight: bold; font-size: 16px; color: #e74c3c;">
+                                    <span>Total Cost:</span>
+                                    <span>CHF ${repairOrder.cost_breakdown?.total_cost?.toFixed(2) || '0.00'}</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Timeline & Service Card -->
+                            <div class="detail-card" style="background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 4px solid #ff9800;">
+                                <h5 style="color: #ff9800; margin-bottom: 15px;"><i class="fas fa-calendar-alt"></i> Service Timeline</h5>
+                                <div class="timeline-item" style="margin-bottom: 10px;">
+                                    <strong>Duration:</strong> ${repairOrder.timeline?.estimated_duration || repairOrder.technician_assignment?.estimated_duration || '2-4 hours'}
+                                </div>
+                                <div class="timeline-item" style="margin-bottom: 10px;">
+                                    <strong>Scheduled:</strong> ${repairOrder.scheduled_date ? new Date(repairOrder.scheduled_date).toLocaleDateString() : 'TBD'}
+                                </div>
+                                <div class="timeline-item" style="margin-bottom: 10px;">
+                                    <strong>Technician Level:</strong> ${repairOrder.technician_assignment?.skill_level || 'Standard'}
+                                </div>
+                                <div class="timeline-item">
+                                    <strong>Parts Delivery:</strong> ${repairOrder.timeline?.parts_delivery || '2-3 days'}
+                                </div>
+                            </div>
+                            
+                            <!-- Warranty & Quality Card -->
+                            <div class="detail-card" style="background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 4px solid #9c27b0;">
+                                <h5 style="color: #9c27b0; margin-bottom: 15px;"><i class="fas fa-shield-alt"></i> Warranty & Quality</h5>
+                                <div class="warranty-item" style="margin-bottom: 10px;">
+                                    <strong>Repair Warranty:</strong> ${repairOrder.warranty_info?.repair_warranty || '6 months'}
+                                </div>
+                                <div class="warranty-item" style="margin-bottom: 10px;">
+                                    <strong>Coverage:</strong> ${repairOrder.warranty_info?.coverage || 'Parts and labor'}
+                                </div>
+                                <div class="warranty-item" style="margin-bottom: 10px;">
+                                    <strong>Follow-up Call:</strong> ${repairOrder.quality_assurance?.follow_up_required ? 'Included' : 'Standard'}
+                                </div>
+                                <div class="warranty-item">
+                                    <strong>Satisfaction Survey:</strong> ${repairOrder.quality_assurance?.customer_satisfaction_survey ? 'Yes' : 'Standard'}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Device Information -->
+                        <div class="device-info" style="margin-top: 20px; padding: 15px; background: #e8f5e9; border-radius: 8px; border-left: 4px solid #4caf50;">
+                            <h5 style="color: #2e7d32; margin-bottom: 10px;"><i class="fas fa-info-circle"></i> Device Information</h5>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                                <div><strong>Type:</strong> ${repairOrder.device_info?.type || 'N/A'}</div>
+                                <div><strong>Brand:</strong> ${repairOrder.device_info?.brand || 'N/A'}</div>
+                                <div><strong>Age:</strong> ${repairOrder.device_info?.age || 'N/A'} years</div>
+                                <div><strong>Priority:</strong> <span class="priority-badge" style="background: ${repairOrder.priority === 'high' ? '#ff9800' : repairOrder.priority === 'urgent' ? '#f44336' : '#4caf50'}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">${(repairOrder.priority || 'standard').toUpperCase()}</span></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Special Instructions -->
+                        ${repairOrder.special_instructions ? `
+                            <div class="special-instructions" style="margin-top: 20px; padding: 15px; background: #e3f2fd; border-radius: 8px; border-left: 4px solid #2196f3;">
+                                <h5 style="color: #1976d2; margin-bottom: 10px;"><i class="fas fa-clipboard-list"></i> Special Instructions</h5>
+                                <p style="margin: 0; color: #555;">${repairOrder.special_instructions}</p>
+                            </div>
+                        ` : ''}
+                        
+                        <!-- Tracking Links -->
+                        ${repairOrder.tracking?.sap_tracking_url || repairOrder.tracking?.customer_portal_url ? `
+                            <div class="tracking-section" style="margin-top: 25px; text-align: center; padding: 20px; background: #f5f5f5; border-radius: 8px;">
+                                <h5 style="margin-bottom: 15px; color: #666;"><i class="fas fa-external-link-alt"></i> Order Tracking</h5>
+                                ${repairOrder.tracking?.sap_tracking_url ? `
+                                    <a href="${repairOrder.tracking.sap_tracking_url}" target="_blank" class="tracking-btn" 
+                                       style="background: #6c757d; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; margin-right: 10px; display: inline-block; transition: all 0.3s ease;">
+                                        <i class="fas fa-database"></i> Track in SAP
+                                    </a>
+                                ` : ''}
+                                ${repairOrder.tracking?.customer_portal_url ? `
+                                    <a href="${repairOrder.tracking.customer_portal_url}" target="_blank" class="tracking-btn"
+                                       style="background: #17a2b8; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; display: inline-block; transition: all 0.3s ease;">
+                                        <i class="fas fa-user"></i> Customer Portal
+                                    </a>
+                                ` : ''}
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        function generateReplacementOptions(options) {
+            return `
+                <div class="replacement-options">
+                    <h4><i class="fas fa-sync-alt"></i> Recommended Replacement Options</h4>
+                    
+                    <div class="replacement-selection-note" style="margin-bottom: 20px; padding: 15px; background: #e8f5e9; border-radius: 8px; font-size: 14px; border-left: 4px solid #4caf50;">
+                        <i class="fas fa-info-circle"></i> <strong>Select a replacement option below to proceed with the sales order</strong>
+                    </div>
+                    
+                    ${options.map((option, index) => {
+                        const isTopChoice = index === 0;
+                        const scoreColor = option.recommendation_score > 80 ? '#4caf50' : option.recommendation_score > 60 ? '#ff9800' : '#2196f3';
+                        return `
+                        <div class="option-card replacement-option ${isTopChoice ? 'top-choice' : ''}" 
+                             style="border: 2px solid ${isTopChoice ? '#4caf50' : '#e0e0e0'}; border-radius: 12px; padding: 25px; margin-bottom: 20px; position: relative; background: ${isTopChoice ? '#f8fff8' : 'white'}; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: all 0.3s ease;">
+                            
+                            ${isTopChoice ? '<div class="top-choice-badge" style="position: absolute; top: -10px; left: 20px; background: #4caf50; color: white; padding: 6px 16px; border-radius: 15px; font-size: 12px; font-weight: bold; box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);"><i class="fas fa-star"></i> TOP CHOICE</div>' : ''}
+                            
+                            <div class="option-header" style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 20px;">
+                                <div style="flex: 1;">
+                                    <div class="option-title" style="font-size: 22px; font-weight: bold; color: #2c3e50; margin-bottom: 8px;">
+                                        #${option.ranking_position || index + 1} ${option.brand} ${option.model}
+                                    </div>
+                                    <div class="ranking-info" style="display: flex; gap: 15px; font-size: 13px; color: #666;">
+                                        <span style="background: ${scoreColor}; color: white; padding: 4px 8px; border-radius: 12px; font-weight: bold;">
+                                            Score: ${option.recommendation_score || 0}/100
+                                        </span>
+                                        <span style="background: #e3f2fd; color: #1976d2; padding: 4px 8px; border-radius: 12px;">
+                                            ${option.recommendation_confidence || 'Standard'} Confidence
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="price-section" style="text-align: right;">
+                                    <div class="current-price" style="font-size: 28px; font-weight: bold; color: #e74c3c;">
+                                        CHF ${option.price?.toLocaleString() || 'N/A'}
+                                    </div>
+                                    ${option.trade_in_value ? `
+                                        <div class="trade-in" style="font-size: 14px; color: #27ae60; margin-top: 4px;">
+                                            Trade-in value: -CHF ${option.trade_in_value}
+                                        </div>
+                                        <div class="net-price" style="font-size: 16px; color: #666; margin-top: 2px;">
+                                            Net: CHF ${(option.price - option.trade_in_value).toLocaleString()}
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                            
+                            <!-- Key Features Grid -->
+                            <div class="features-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                                <div class="feature-card" style="background: #f8f9fa; padding: 15px; border-radius: 8px; text-align: center;">
+                                    <div class="feature-icon" style="font-size: 24px; margin-bottom: 8px;">⚡</div>
+                                    <div class="feature-label" style="font-size: 12px; color: #666; margin-bottom: 4px;">Energy Rating</div>
+                                    <div class="feature-value" style="font-weight: bold; color: #27ae60; font-size: 16px;">${option.energy_rating || 'N/A'}</div>
+                                </div>
+                                <div class="feature-card" style="background: #f8f9fa; padding: 15px; border-radius: 8px; text-align: center;">
+                                    <div class="feature-icon" style="font-size: 24px; margin-bottom: 8px;">🚚</div>
+                                    <div class="feature-label" style="font-size: 12px; color: #666; margin-bottom: 4px;">Delivery</div>
+                                    <div class="feature-value" style="font-weight: bold; font-size: 16px;">${option.estimated_delivery || 'N/A'}</div>
+                                </div>
+                                <div class="feature-card" style="background: #f8f9fa; padding: 15px; border-radius: 8px; text-align: center;">
+                                    <div class="feature-icon" style="font-size: 24px; margin-bottom: 8px;">🛡️</div>
+                                    <div class="feature-label" style="font-size: 12px; color: #666; margin-bottom: 4px;">Warranty</div>
+                                    <div class="feature-value" style="font-weight: bold; font-size: 16px;">${option.warranty_years || 2} years</div>
+                                </div>
+                                <div class="feature-card" style="background: #f8f9fa; padding: 15px; border-radius: 8px; text-align: center;">
+                                    <div class="feature-icon" style="font-size: 24px; margin-bottom: 8px;">📦</div>
+                                    <div class="feature-label" style="font-size: 12px; color: #666; margin-bottom: 4px;">Stock Level</div>
+                                    <div class="feature-value" style="font-weight: bold; font-size: 16px; color: ${option.stock === 'high' ? '#27ae60' : option.stock === 'medium' ? '#f39c12' : '#e74c3c'};">${option.stock || 'N/A'}</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Business Details -->
+                            <div class="business-details" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                                <div class="detail-group">
+                                    <h6 style="color: #666; margin-bottom: 10px; font-size: 14px;"><i class="fas fa-chart-line"></i> Business Impact</h6>
+                                    <div class="detail-item" style="margin-bottom: 6px;"><strong>Margin:</strong> CHF ${option.margin || 'N/A'} (${option.margin && option.price ? ((option.margin/option.price)*100).toFixed(1) : 'N/A'}%)</div>
+                                    <div class="detail-item" style="margin-bottom: 6px;"><strong>Installation:</strong> ${option.installation_included ? 'Included' : 'Additional cost'}</div>
+                                    ${option.financing_available ? '<div class="detail-item" style="color: #1976d2;"><i class="fas fa-credit-card"></i> Financing available</div>' : ''}
+                                </div>
+                                <div class="detail-group">
+                                    <h6 style="color: #666; margin-bottom: 10px; font-size: 14px;"><i class="fas fa-leaf"></i> Sustainability</h6>
+                                    ${option.sustainability_impact ? `
+                                        <div class="detail-item" style="margin-bottom: 6px;"><strong>Energy Savings:</strong> ${option.sustainability_impact.energy_savings_percent}%</div>
+                                        <div class="detail-item" style="margin-bottom: 6px;"><strong>CO2 Reduction:</strong> ${option.sustainability_impact.co2_reduction_kg_year}kg/year</div>
+                                    ` : '<div class="detail-item">Standard efficiency</div>'}
+                                </div>
+                            </div>
+                            
+                            <!-- Recommendation Reason -->
+                            <div class="recommendation-reason" style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #2196f3;">
+                                <h6 style="color: #1976d2; margin-bottom: 8px;"><i class="fas fa-lightbulb"></i> Why we recommend this:</h6>
+                                <div style="color: #1976d2; font-weight: 500;">${option.recommended_reason || 'Great value for your needs'}</div>
+                            </div>
+                            
+                            <!-- TCO Information -->
+                            ${option.total_cost_of_ownership ? `
+                                <div class="tco-section" style="background: #fff3e0; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #ff9800;">
+                                    <h6 style="color: #f57c00; margin-bottom: 10px;"><i class="fas fa-calculator"></i> 10-Year Total Cost of Ownership</h6>
+                                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 15px;">
+                                        <div class="tco-item" style="text-align: center;">
+                                            <div style="font-size: 18px; font-weight: bold; color: #f57c00;">CHF ${option.total_cost_of_ownership.initial_cost?.toLocaleString() || 'N/A'}</div>
+                                            <div style="font-size: 12px; color: #666;">Initial Cost</div>
+                                        </div>
+                                        <div class="tco-item" style="text-align: center;">
+                                            <div style="font-size: 18px; font-weight: bold; color: #f57c00;">CHF ${option.total_cost_of_ownership.annual_operating_cost || 'N/A'}</div>
+                                            <div style="font-size: 12px; color: #666;">Annual Operating</div>
+                                        </div>
+                                        <div class="tco-item" style="text-align: center;">
+                                            <div style="font-size: 18px; font-weight: bold; color: #f57c00;">CHF ${option.total_cost_of_ownership.tco_10_years?.toLocaleString() || 'N/A'}</div>
+                                            <div style="font-size: 12px; color: #666;">10-Year Total</div>
+                                        </div>
+                                        <div class="tco-item" style="text-align: center;">
+                                            <div style="font-size: 18px; font-weight: bold; color: #f57c00;">CHF ${option.total_cost_of_ownership.monthly_cost || 'N/A'}</div>
+                                            <div style="font-size: 12px; color: #666;">Monthly Cost</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ` : ''}
+                            
+                            <!-- Scoring Breakdown (if available) -->
+                            ${option.scoring_breakdown ? `
+                                <div class="scoring-section" style="background: #f3e5f5; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #9c27b0;">
+                                    <h6 style="color: #7b1fa2; margin-bottom: 10px;"><i class="fas fa-chart-bar"></i> AI Scoring Breakdown</h6>
+                                    <div style="font-size: 13px; line-height: 1.6;">
+                                        ${Object.entries(option.scoring_breakdown).map(([key, value]) => 
+                                            `<div style="margin-bottom: 4px;"><strong>${key.replace(/_/g, ' ')}:</strong> ${value}</div>`
+                                        ).join('')}
+                                    </div>
+                                </div>
+                            ` : ''}
+                            
+                            <!-- Action Button -->
+                            <div class="option-action" style="text-align: center;">
+                                <button class="btn select-replacement-btn" onclick="selectReplacementOption(${index}, '${option.model}', '${option.brand}')" 
+                                        style="background: ${isTopChoice ? 'linear-gradient(135deg, #4caf50, #45a049)' : 'linear-gradient(135deg, #2196f3, #1976d2)'}; 
+                                               color: white; padding: 15px 40px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px;
+                                               box-shadow: 0 4px 12px ${isTopChoice ? 'rgba(76, 175, 80, 0.3)' : 'rgba(33, 150, 243, 0.3)'};
+                                               transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px;">
+                                    <i class="fas fa-shopping-cart"></i> Select This Option
+                                </button>
+                                <div style="margin-top: 12px; font-size: 13px; color: #666;">
+                                    Creates Salesforce opportunity automatically
+                                </div>
+                            </div>
+                        </div>
+                    `;}).join('')}
+                </div>
+            `;
+        }
+
+        function generateAgentReasoning(reasoning) {
+            return `
+                <div style="margin-top: 30px;">
+                    <h4><i class="fas fa-brain"></i> Agent Decision Process</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="option-card">
+                            <h5>Technical Analysis</h5>
+                            <p><strong>Repair Probability:</strong> ${(reasoning.technical?.probability * 100).toFixed(0)}%</p>
+                            <p><strong>Complexity:</strong> ${reasoning.technical?.complexity}</p>
+                            <p><strong>Risk Level:</strong> ${reasoning.technical?.risk}</p>
+                        </div>
+                        <div class="option-card">
+                            <h5>Economic Analysis</h5>
+                            <p><strong>Viability:</strong> ${reasoning.economic?.viability}</p>
+                            <p><strong>Score:</strong> ${reasoning.economic?.score}/100</p>
+                            <p><strong>Reasoning:</strong> ${reasoning.economic?.reasoning}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showError(message) {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('recommendationContent').style.display = 'block';
+            document.getElementById('recommendationContent').innerHTML = `
+                <div class="recommendation-header error" style="background: linear-gradient(135deg, #ffebee, #ffcdd2); color: #c62828;">
+                    <div><i class="fas fa-exclamation-triangle" style="font-size: 2rem;"></i></div>
+                    <div>
+                        <h3>Processing Error</h3>
+                        <p>Error: ${message}</p>
+                        <p>Please ensure the backend server is running and try again.</p>
+                    </div>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

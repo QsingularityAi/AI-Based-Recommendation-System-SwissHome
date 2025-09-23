@@ -1,0 +1,208 @@
+{
+  "version": "1.0",
+  "last_updated": "2025-09-22T03:40:35.694549",
+  "rule_sets": {
+    "safety_rules": {
+      "priority": 1,
+      "rules": [
+        {
+          "name": "smoke_fire_emergency",
+          "conditions": [
+            {
+              "field": "error_description",
+              "operator": "contains",
+              "value": [
+                "smoke",
+                "fire",
+                "burning",
+                "gas leak"
+              ],
+              "match_any": true
+            }
+          ],
+          "action": "refer_manufacturer",
+          "override": true,
+          "reasoning": "Safety concern detected - immediate manufacturer attention required"
+        },
+        {
+          "name": "electrical_hazard",
+          "conditions": [
+            {
+              "field": "error_description",
+              "operator": "contains",
+              "value": [
+                "electric shock",
+                "sparks",
+                "burning smell from electrical"
+              ],
+              "match_any": true
+            }
+          ],
+          "action": "refer_manufacturer",
+          "override": true,
+          "reasoning": "Electrical safety hazard - requires immediate professional attention"
+        }
+      ]
+    },
+    "warranty_rules": {
+      "priority": 2,
+      "rules": [
+        {
+          "name": "under_warranty_new",
+          "conditions": [
+            {
+              "field": "age",
+              "operator": "lte",
+              "value": 1
+            },
+            {
+              "field": "device_type",
+              "operator": "in_list",
+              "value": [
+                "oven",
+                "refrigerator",
+                "dishwasher"
+              ]
+            }
+          ],
+          "action": "refer_manufacturer",
+          "reasoning": "Device under warranty - manufacturer responsibility"
+        }
+      ]
+    },
+    "economic_rules": {
+      "priority": 3,
+      "rules": [
+        {
+          "name": "high_value_customer_repair_preference",
+          "conditions": [
+            {
+              "field": "customer_tier",
+              "operator": "in_list",
+              "value": [
+                "Gold",
+                "Platinum"
+              ]
+            },
+            {
+              "field": "repair_cost",
+              "operator": "lte",
+              "value": 800
+            },
+            {
+              "field": "repair_probability",
+              "operator": "gte",
+              "value": 0.7
+            }
+          ],
+          "action": "recommend_repair",
+          "weight": 20,
+          "reasoning": "Premium customer - prioritize repair when feasible"
+        },
+        {
+          "name": "cost_ceiling_exceeded",
+          "conditions": [
+            {
+              "field": "repair_cost",
+              "operator": "gt",
+              "value_field": "cost_ceiling"
+            }
+          ],
+          "action": "recommend_replace",
+          "weight": 30,
+          "reasoning": "Repair cost exceeds economic threshold"
+        },
+        {
+          "name": "high_margin_replacement",
+          "conditions": [
+            {
+              "field": "replacement_margin",
+              "operator": "gt",
+              "value": 500
+            },
+            {
+              "field": "repair_probability",
+              "operator": "lt",
+              "value": 0.8
+            }
+          ],
+          "action": "recommend_replace",
+          "weight": 25,
+          "reasoning": "High margin replacement opportunity with repair uncertainty"
+        }
+      ]
+    },
+    "technical_rules": {
+      "priority": 4,
+      "rules": [
+        {
+          "name": "very_old_device",
+          "conditions": [
+            {
+              "field": "age",
+              "operator": "gte",
+              "value": 15
+            }
+          ],
+          "action": "recommend_replace",
+          "weight": 25,
+          "reasoning": "Device exceeds typical lifespan"
+        },
+        {
+          "name": "low_repair_probability",
+          "conditions": [
+            {
+              "field": "repair_probability",
+              "operator": "lt",
+              "value": 0.6
+            }
+          ],
+          "action": "recommend_replace",
+          "weight": 20,
+          "reasoning": "Low technical success probability"
+        },
+        {
+          "name": "high_success_repair",
+          "conditions": [
+            {
+              "field": "repair_probability",
+              "operator": "gte",
+              "value": 0.9
+            },
+            {
+              "field": "repair_cost",
+              "operator": "lte",
+              "value": 500
+            }
+          ],
+          "action": "recommend_repair",
+          "weight": 25,
+          "reasoning": "High success probability with reasonable cost"
+        }
+      ]
+    },
+    "sustainability_rules": {
+      "priority": 5,
+      "rules": [
+        {
+          "name": "young_device_sustainability",
+          "conditions": [
+            {
+              "field": "age",
+              "operator": "lt",
+              "value": 8
+            },
+            {
+              "field": "repair_probability",
+              "operator": "gte",
+              "value": 0.7
+            }
+          ],
+          "action": "recommend_repair",
+          "weight": 15,
+          "reasoning": "Environmental benefit from extending device lifespan"
+        }
+      ]
+    }
+  }
+}
