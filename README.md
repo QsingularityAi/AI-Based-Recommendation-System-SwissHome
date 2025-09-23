@@ -4,8 +4,62 @@
 
 This is an **enterprise-grade multi-agent system** built with LangGraph that automates repair vs. replacement decisions for premium home appliances. The system integrates with existing enterprise systems (SAP, Salesforce, PIM) and provides intelligent, data-driven recommendations optimized for both customer satisfaction and business profitability.
 
+## 🎬 MVP Demo
+
+![ServiceMindAI Demo](ServiceMindAI.gif)
+
 ## 🏗️ Enhanced System Architecture
 
+```mermaid
+graph TD
+    Start([Start]) --> Triage[Triage Agent]
+    
+    %% Triage Decision Points
+    Triage --> |route_after_triage| TriageDecision{Triage Decision}
+    
+    %% Triage Routes
+    TriageDecision --> |manufacturer| ManufacturerRef[Manufacturer Referral]
+    TriageDecision --> |urgent_manufacturer| ManufacturerRef
+    TriageDecision --> |manual_review| ManualReview[Manual Review Required]
+    TriageDecision --> |replacement_focus| DataEnrich[Data Enrichment Agent]
+    TriageDecision --> |normal| DataEnrich
+    
+    %% Parallel Processing after Data Enrichment
+    DataEnrich --> TechAnalysis[Technical Analyst Agent]
+    DataEnrich --> EconAnalysis[Economic Analyst Agent]
+    
+    %% Both analyses feed into recommendation
+    TechAnalysis --> Recommendation[Recommendation Engine Agent]
+    EconAnalysis --> Recommendation
+    
+    %% End states
+    Recommendation --> End1([END])
+    ManufacturerRef --> End2([END])
+    ManualReview --> End3([END])
+    
+    %% Styling
+    classDef agentNode fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef decisionNode fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef endNode fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef startNode fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
+    
+    class Triage,DataEnrich,TechAnalysis,EconAnalysis,Recommendation agentNode
+    class TriageDecision decisionNode
+    class ManufacturerRef,ManualReview endNode
+    class Start startNode
+    class End1,End2,End3 endNode
+    
+    %% Add details to nodes
+    Triage -.-> TriageDetails["🔍 Input Validation<br/>🚨 Safety Check<br/>📅 Age/Warranty Assessment<br/>🎯 Routing Decision"]
+    DataEnrich -.-> DataDetails["💼 SAP Integration<br/>👤 Salesforce Integration<br/>📊 PIM/Snowflake Integration"]
+    TechAnalysis -.-> TechDetails["🔧 Damage Classification<br/>📈 Repair Probability<br/>⚙️ Complexity Assessment<br/>⚠️ Risk Evaluation"]
+    EconAnalysis -.-> EconDetails["💰 Cost-Benefit Analysis<br/>📊 Margin Analysis<br/>👑 Customer Tier Impact<br/>🌱 Sustainability Factor"]
+    Recommendation -.-> RecDetails["🔄 Data Synthesis<br/>📊 Confidence Scoring<br/>🔀 Override Logic<br/>✅ Final Decision"]
+    
+    %% Style the detail boxes
+    classDef detailBox fill:#f9f9f9,stroke:#666,stroke-width:1px,stroke-dasharray: 3 3
+    class TriageDetails,DataDetails,TechDetails,EconDetails,RecDetails detailBox
+```
 ### Multi-Agent Workflow
 1. **Triage Agent**: Intelligent routing with safety checks and business rules
 2. **Data Enrichment Agent**: Real-time integration with SAP, Salesforce, PIM systems
