@@ -1,0 +1,45 @@
+[project]
+name = "ai-based-recommendation-system-swisshome"
+version = "0.1.0"
+description = "AI-Based Recommendation System for SwissHome"
+readme = "README.md"
+requires-python = ">=3.9,<4.0"
+dependencies = [
+    # Core Framework Dependencies
+    "fastapi>=0.104.1",
+    "uvicorn>=0.24.0",
+    
+    # LangGraph and LangChain for Multi-Agent System
+    "langgraph>=0.6.0",
+    "langchain>=0.3.0",
+    "langchain-google-genai>=2.1.0",
+    "langchain-community>=0.3.0",
+    
+    # Data Processing and Validation
+    "pydantic>=2.11.0",
+    "python-dotenv>=1.0.0",
+    
+    # Required for file uploads in FastAPI
+    "python-multipart>=0.0.6",
+    
+    # Additional dependencies for enhanced functionality
+    "aiofiles>=23.2.1",
+    "httpx>=0.25.2",
+    "typing-extensions>=4.8.0",
+    
+    # Salesforce integration
+    "langchain-salesforce==0.2.1",
+    "langchain-hana",
+    
+    # Development and testing (optional)
+    "pytest>=7.4.3",
+    "pytest-asyncio>=0.21.1",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["business_rules", "integrations"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
